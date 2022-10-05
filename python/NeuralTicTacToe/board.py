@@ -69,7 +69,6 @@ class TicTacBoard:
         else:
             return False
 
-
     def _is_finished(self) -> bool:
         if 0 in self.board.reshape(-1) and not self.winner:
             return False
@@ -87,14 +86,12 @@ class TicTacBoard:
 
 
 if __name__ == "__main__":
+    # play game at random
     game = TicTacBoard()
 
-    game.play_turn(1, 1)
+    while not game._is_finished():
+        truc = game._get_possibilities()[np.random.choice(range(len(game._get_possibilities())))]
 
-    game.play_turn(2, 2)
+        print(truc)
+        game.play_turn(truc[0], truc[1])
 
-    game.play_turn(1, 2)
-
-    game.play_turn(0, 0)
-
-    game.play_turn(1, 0)
