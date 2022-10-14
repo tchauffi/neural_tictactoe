@@ -105,16 +105,3 @@ class TicTacBoard:
             return "  "
         else:
             return "👌"
-
-
-if __name__ == "__main__":
-    # play game at random
-    game = TicTacBoard()
-
-    while not game.is_finished():
-        turn = game.get_possibilities()[
-            np.random.choice(range(len(game.get_possibilities())))
-        ]
-
-        print(turn)
-        game.play_turn(turn[0], turn[1])
