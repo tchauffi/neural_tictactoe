@@ -1,5 +1,5 @@
 from board.board import TicTacBoard
-from bot.random_bot import RandomBot
+from agent.random_bot import RandomBot
 
 # play game at random
 game = TicTacBoard()
