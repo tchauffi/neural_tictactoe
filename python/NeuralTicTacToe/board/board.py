@@ -3,6 +3,11 @@ from numpy.typing import NDArray
 from typing import List
 from enum import Enum
 
+import logging
+
+logger = logging.getLogger("board")
+logger.setLevel(logging.INFO)
+
 
 class GameStatus(Enum):
     NO_WINNER = -1
@@ -44,7 +49,7 @@ class TicTacBoard:
                 f"{board}\n{self._encode_game(self.board[0][j])}|"
                 f"{self._encode_game(self.board[1][j])}|{self._encode_game(self.board[2][j])}"
             )
-        print(board)
+        logger.info(board)
 
     def get_possibilities(self) -> list:
         """Returns all possible possibilities from current board"""
@@ -63,10 +68,10 @@ class TicTacBoard:
 
     def define_winner(self):
         if self.player1_turn:
-            print("Player 1 wins")
+            logging.info("Player 1 wins")
             self.winner = GameStatus.PLAYER_1_WIN
         else:
-            print("Player 2 wins")
+            logging.info("Player 2 wins")
             self.winner = GameStatus.PLAYER_2_WIN
 
     def is_winning(self) -> bool:
@@ -85,7 +90,7 @@ class TicTacBoard:
             self.define_winner()
             return True
         elif 0 not in self.board:
-            print("It's a draw")
+            logging.info("It's a draw")
             self.winner = GameStatus.DRAW
             return False
         else:
