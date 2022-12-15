@@ -2,7 +2,7 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import List
 from enum import Enum
-
+import random
 import logging
 
 logger = logging.getLogger("board")
@@ -24,12 +24,11 @@ def is_even(i):
 
 
 class TicTacBoard:
-    def __init__(self, plays: List = [], winner: GameStatus = GameStatus.NO_WINNER):
-        self.winner = winner
+    def __init__(self, plays: List = []):
         self.plays = plays
 
     def copy(self):
-        return type(self)(self.plays, self.winner)
+        return type(self)(self.plays.copy())
 
     def compute_board(self):
         board = np.zeros(9)
@@ -44,7 +43,6 @@ class TicTacBoard:
         """Play turn is possible and returns true if played else returns False"""
         if self.is_possible(i) and not self.is_finished():
             self.plays.append(i)
-            self.is_winning()
             return True
         else:
             return False
@@ -60,9 +58,12 @@ class TicTacBoard:
             )
         return board_ascii
 
-    def get_possibilities(self) -> list:
+    def get_possibilities(self, shuffle=True) -> list:
         """Returns all possible possibilities from current board"""
-        return [i for i in range(9) if i not in self.plays]
+        possibilities = [i for i in range(9) if i not in self.plays]
+        if shuffle:
+            random.shuffle(possibilities)
+        return possibilities
 
     def is_possible(self, i: int) -> bool:
         """Check if combination is possible"""
@@ -77,37 +78,37 @@ class TicTacBoard:
 
     def define_winner(self):
         if self.is_player1_turn():
-            self.winner = GameStatus.PLAYER_1_WIN
+            return GameStatus.PLAYER_1_WIN
         else:
-            self.winner = GameStatus.PLAYER_2_WIN
+            return GameStatus.PLAYER_2_WIN
 
-    def is_winning(self) -> bool:
+    def undo(self):
+        self.plays.pop()
+
+    def is_winning(self) -> GameStatus:
         """Check if current state board is winning"""
         board = self.compute_board()
         for j in range(3):
-            if np.abs(np.sum(board[j])) == 3 or np.abs(np.sum(board.T[j])) == 3:
-                self.define_winner()
-                return True
+            if (board[j][0] == board[j][1] == board[j][2] and board[j][0] != 0) or (
+                board[0][j] == board[1][j] == board[2][j] and board[0][j] != 0
+            ):
+                return self.define_winner()
         if np.abs(board[0][0] + board[1][1] + board[2][2]) == 3:
-            self.define_winner()
-            return True
+            return self.define_winner()
         elif np.abs(board[0][2] + board[1][1] + board[2][0]) == 3:
-            self.define_winner()
-            return True
+            return self.define_winner()
         elif 0 not in board:
-            self.winner = GameStatus.DRAW
-            return False
+            return GameStatus.DRAW
         else:
-            return False
+            return GameStatus.NO_WINNER
 
     def is_finished(self) -> bool:
-        if len(self.plays) < 9 and self.winner is GameStatus.NO_WINNER:
+        if len(self.plays) < 9 and self.is_winning() == GameStatus.NO_WINNER:
             return False
         else:
             return True
 
     def reset(self):
-        self.winner = GameStatus.NO_WINNER
         self.plays = []
 
     @staticmethod
