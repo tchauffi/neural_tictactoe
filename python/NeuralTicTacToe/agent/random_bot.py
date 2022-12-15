@@ -5,7 +5,6 @@ from typing import Tuple, Optional
 
 
 class RandomBot(Robot):
-
     def __init__(self, seed: Optional[int] = None):
         self.random_seed = seed
 
@@ -14,9 +13,5 @@ class RandomBot(Robot):
             np.random.seed(self.random_seed)
 
         return current_board_state.get_possibilities()[
-            np.random.choice(range(len(current_board_state.get_possibilities())))
+            np.random.choice(len(current_board_state.get_possibilities()), p=None)
         ]
-
-
-
-
